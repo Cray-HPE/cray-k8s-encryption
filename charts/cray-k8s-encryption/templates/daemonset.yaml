@@ -1,0 +1,75 @@
+{{- /*
+.Files.Get "files/LICENSE"
+*/}}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    # helm.sh/chart: cray-k8s-encryption
+    app.kubernetes.io/instance: cray-k8s-encryption
+    app.kubernetes.io/name: cray-k8s-encryption
+  name: cray-k8s-encryption
+  namespace: kube-system
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cray-k8s-encryption
+      app.kubernetes.io/instance: cray-k8s-encryption
+      app.kubernetes.io/name: cray-k8s-encryption
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: cray-k8s-encryption
+        app.kubernetes.io/instance: cray-k8s-encryption
+        app.kubernetes.io/name: cray-k8s-encryption
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      serviceAccount: cray-k8s-encryption
+      serviceAccountName: cray-k8s-encryption
+      volumes:
+        - name: k8s-encryption-dir
+          hostPath:
+            path: {{ .Values.encryptionConfigDir }}
+            type: Directory
+      containers:
+      - name: cray-k8s-encryption
+        volumeMounts:
+         - name: k8s-encryption-dir
+           mountPath: /k8s
+        env:
+          - name: NODE
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: INTERVAL
+            value: "{{ .Values.environment.interval }}"
+          - name: VERBOSE
+            value: "{{ .Values.environment.verbose }}"
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          limits:
+            cpu: 2
+            memory: 1Gi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        securityContext:
+          privileged: true
+        command:
+        - /bin/sh
+        args:
+        - -c
+        - |
+          {{- .Files.Get "files/node-encryption-annotation.sh" | indent 10 }}
