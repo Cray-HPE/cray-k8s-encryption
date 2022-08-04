@@ -23,7 +23,7 @@
 #
 
 # Default directory that stores the encryption configuration yaml
-encryptionConfigDir: "/etc/kubernetes/encryption"
+encryptionConfigDir: "/etc/cray/kubernetes/encryption"
 
 environment:
   # Maximum amount of time in seconds the daemon loops between checking yaml
@@ -44,7 +44,7 @@ environment:
 # - sed (also no gnu usage)
 image:
   repository: artifactory.algol60.net/csm-docker/stable/docker-kubectl
-  tag: 1.19.15
+  tag: 1.21.12
   pullPolicy: IfNotPresent
 
 nameOverride: ""
