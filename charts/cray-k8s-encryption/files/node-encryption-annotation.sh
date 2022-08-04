@@ -36,7 +36,7 @@ PREFIX="${PREFIX:-cray-k8s-encryption}"
 NAMESPACE="${NAMESPACE:-kube-system}"
 
 # Default if not given, will likely never exist outside of a volume mount.
-ENCRYPTION_CONFIGFILE="${ENCRYPTION_CONFIGFILE:-/k8s/encryption/current.yaml}"
+ENCRYPTION_CONFIGFILE="${ENCRYPTION_CONFIGFILE:-/k8s/current.yaml}"
 
 # Current node we're running on, here for testing and as uname -n doesn't return
 # the actual hostname that kubectl get nodes will. We pass in that information
