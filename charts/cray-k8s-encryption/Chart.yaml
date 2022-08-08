@@ -23,7 +23,7 @@
 #
 apiVersion: v2
 name: cray-k8s-encryption
-version: 0.0.1
+version: 0.0.3
 description: Daemonset controlling k8s data rewrites relating to k8s encryption
 keywords:
   - api
