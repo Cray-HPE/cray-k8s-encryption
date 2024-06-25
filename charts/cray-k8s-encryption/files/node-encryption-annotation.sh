@@ -55,7 +55,7 @@ annotation_prefix() {
 # controlplane nodes have the encryption file so no sense in annotating anything
 # that isn't a control-plane.
 kubectl_get_controlplane_nodes() {
-  kubectl get nodes --selector=node-role.kubernetes.io/master --no-headers=true -o custom-columns=NAME:.metadata.name
+  kubectl get nodes --selector=node-role.kubernetes.io/control-plane --no-headers=true -o custom-columns=NAME:.metadata.name
 }
 
 # Used elsewhere but this determines which daemonset does work
@@ -66,7 +66,7 @@ first_controlplane_node() {
 # Wrapper for the crazy kubectl output to get taints and what nodes are ready.
 # Not sure taints are useful though as all shasta nodes have NoSchedule anyway.
 all_ready_controlplane_nodes() {
-  kubectl get nodes --selector=node-role.kubernetes.io/master -o jsonpath='{range .items[*]} {.metadata.name} {.status.conditions[?(@.type=="Ready")].status} {" "} {.spec.taints} {"\n"} {end}' | awk '/True/ {print $1}'
+  kubectl get nodes --selector=node-role.kubernetes.io/control-plane -o jsonpath='{range .items[*]} {.metadata.name} {.status.conditions[?(@.type=="Ready")].status} {" "} {.spec.taints} {"\n"} {end}' | awk '/True/ {print $1}'
 }
 
 # We also want to refuse updates if any control plane node isn't Ready, so
@@ -131,7 +131,7 @@ encryption_config_annotation() {
 
 # Returns all the control plane annotation values, blank lines are "no annotation", that is OK
 get_controlplane_encryption_annotations() {
-  kubectl get nodes --selector=node-role.kubernetes.io/master -o jsonpath='{range .items[*]}{.metadata.annotations.'"$(annotation_prefix)"'}{"\n"}'
+  kubectl get nodes --selector=node-role.kubernetes.io/control-plane -o jsonpath='{range .items[*]}{.metadata.annotations.'"$(annotation_prefix)"'}{"\n"}'
 }
 
 # Determines if/when it is ok to update secrets on first control-plane node
