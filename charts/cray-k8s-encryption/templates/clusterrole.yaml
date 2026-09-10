@@ -7,16 +7,27 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: cray-k8s-encryption
 rules:
-  - apiGroups:
-    - ""
-    resources:
-    - nodes
-    - secrets
-    - daemonsets
-    verbs:
-    - get
-    - list
-    - create
-    - delete
-    - patch
-    - update
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - secrets
+  verbs:
+  - get
+  - list
+  - create
+  - delete
+  - patch
+  - update
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  verbs:
+  - get
+  - list
+  - create
+  - delete
+  - patch
+  - update
+  
